@@ -1,13 +1,49 @@
-const { app, BrowserWindow, Tray, Menu, screen, ipcMain } = require('electron');
+const { app, BrowserWindow, Tray, Menu, screen, ipcMain, dialog } = require('electron');
 const path = require('path');
-
-// Disable sandbox for Linux compatibility (fixes AppImage coredump TRAP)
-app.commandLine.appendSwitch('no-sandbox');
-app.commandLine.appendSwitch('disable-gpu-sandbox');
+const { execSync } = require('child_process');
 
 let mainWindow;
 let tray;
 let isLocked = false;
+
+function checkLinuxSandbox() {
+    if (process.platform === 'linux') {
+        try {
+            // Check if kernel allows user namespaces (required by Chromium Sandbox)
+            execSync('unshare --user --map-root-user echo 1', { stdio: 'ignore' });
+        } catch (err) {
+            // Unprivileged user namespace restricted. We must check if the SUID sandbox is properly configured.
+            const fs = require('fs');
+            // electron-builder extracts app into /opt/AppName or via an AppImage FUSE mount
+            const exeDir = path.dirname(process.execPath);
+            const sandboxPath = path.join(exeDir, 'chrome-sandbox');
+            try {
+                const stat = fs.statSync(sandboxPath);
+                // Check if owned by root (uid=0) and has setuid bit (0o4000)
+                if (stat.uid === 0 && (stat.mode & 0o4000)) {
+                    // SUID sandbox is available, we can proceed.
+                    return;
+                }
+            } catch (e) {
+                // chrome-sandbox missing or inaccessible
+            }
+
+            dialog.showErrorBox(
+                "Sandbox Initialization Failed",
+                "Your Linux distribution restricts unprivileged user namespaces. The Electron Chromium sandbox requires them to run securely.\n\n" +
+                "Since you are using the AppImage, the SUID sandbox fallback cannot be used dynamically.\n" +
+                "To fix this system-wide and safely run Electron apps:\n" +
+                "1. Temporarily enable namespaces: 'sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0', OR\n" +
+                "2. Install the '.deb' package version which configures the SUID sandbox automatically.\n\n" +
+                "The application will now safely exit."
+            );
+            process.exit(1);
+        }
+    }
+}
+
+// Ensure the sandbox can run before anything else happens
+checkLinuxSandbox();
 
 function createWindow() {
     const { width: screenWidth } = screen.getPrimaryDisplay().workAreaSize;
@@ -19,7 +55,6 @@ function createWindow() {
         y: 20,
         frame: false,
         transparent: true,
-        alwaysOnTop: true,
         resizable: false,
         skipTaskbar: false,
         hasShadow: false,
@@ -71,7 +106,7 @@ function createTray() {
         {
             label: 'Always on Top',
             type: 'checkbox',
-            checked: true,
+            checked: false,
             click: (item) => {
                 mainWindow.setAlwaysOnTop(item.checked);
             }

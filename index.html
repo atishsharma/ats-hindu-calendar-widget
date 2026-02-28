@@ -24,9 +24,19 @@
         <!-- PAGE: Calendar Widget -->
         <div id="page-calendar">
             <div class="toolbar">
-                <div class="lang-switch">
-                    <button onclick="setLang('en')" id="btn-en" class="lang-btn active">EN</button>
-                    <button onclick="setLang('hi')" id="btn-hi" class="lang-btn">हिं</button>
+                <div class="toolbar-left">
+                    <button id="btn-toggle-tb" onclick="toggleTitlebar()" class="settings-icon tb-toggle-icon"
+                        title="Toggle Titlebar">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="9" x2="21" y2="9"></line>
+                        </svg>
+                    </button>
+                    <div class="lang-switch">
+                        <button onclick="setLang('en')" id="btn-en" class="lang-btn active">EN</button>
+                        <button onclick="setLang('hi')" id="btn-hi" class="lang-btn">हिं</button>
+                    </div>
                 </div>
                 <div class="toolbar-right">
                     <div class="color-row">
@@ -117,6 +127,9 @@
                     </div>
 
                     <button onclick="goToday()" class="today-btn">⟳ Today</button>
+                    <button onclick="openMonthView()" class="today-btn month-view-btn"
+                        style="margin-top: 8px; background: rgba(0,0,0,0.05); color: var(--text); border: 2px solid var(--border);">📅
+                        Month View</button>
                 </div>
             </div>
         </div>
@@ -195,6 +208,31 @@
             <div class="modal-actions">
                 <button onclick="closeDatePicker()" class="modal-cancel">Cancel</button>
                 <button onclick="applyDatePicker()" class="modal-apply">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Month View Modal -->
+    <div id="month-view-modal" class="modal-overlay hidden" onclick="closeMonthView()">
+        <div class="modal-content month-modal" onclick="event.stopPropagation()">
+            <div class="month-header">
+                <button onclick="prevMonth()" class="nav-arrow-btn">◀</button>
+                <h3 id="month-view-title" class="modal-title" style="margin: 0;">Month</h3>
+                <button onclick="nextMonth()" class="nav-arrow-btn">▶</button>
+            </div>
+            <div class="calendar-grid">
+                <div class="cal-day-header">Sun</div>
+                <div class="cal-day-header">Mon</div>
+                <div class="cal-day-header">Tue</div>
+                <div class="cal-day-header">Wed</div>
+                <div class="cal-day-header">Thu</div>
+                <div class="cal-day-header">Fri</div>
+                <div class="cal-day-header">Sat</div>
+                <!-- days injected here -->
+                <div id="cal-days" style="display: contents;"></div>
+            </div>
+            <div class="modal-actions" style="margin-top: 15px;">
+                <button onclick="closeMonthView()" class="modal-cancel" style="width: 100%;">Close</button>
             </div>
         </div>
     </div>

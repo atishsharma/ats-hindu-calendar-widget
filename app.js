@@ -196,21 +196,20 @@ let settingsOpen = false;
 const appShell = document.getElementById('app-shell');
 const titlebar = document.getElementById('titlebar');
 
-appShell.addEventListener('mouseenter', () => {
-    if (!titlebarVisible) {
-        titlebarVisible = true;
-        titlebar.classList.add('show');
-        if (window.widgetAPI) window.widgetAPI.adjustHeight(TITLEBAR_HEIGHT);
-    }
-});
+// Titlebar state init
+let tbVisible = localStorage.getItem('titlebarVisible') !== 'false';
+if (!tbVisible) titlebar.classList.add('hidden');
 
-appShell.addEventListener('mouseleave', () => {
-    if (titlebarVisible && !settingsOpen) {
-        titlebarVisible = false;
-        titlebar.classList.remove('show');
-        if (window.widgetAPI) window.widgetAPI.adjustHeight(-TITLEBAR_HEIGHT);
+function toggleTitlebar() {
+    tbVisible = !tbVisible;
+    localStorage.setItem('titlebarVisible', tbVisible);
+    if (tbVisible) {
+        titlebar.classList.remove('hidden');
+    } else {
+        titlebar.classList.add('hidden');
     }
-});
+    requestResize();
+}
 
 // Init
 updateWidget();
@@ -222,12 +221,6 @@ function showSettings() {
     settingsOpen = true;
     document.getElementById('page-calendar').classList.add('page-hidden');
     document.getElementById('page-settings').classList.remove('page-hidden');
-    // Force titlebar visible
-    if (!titlebarVisible) {
-        titlebarVisible = true;
-        titlebar.classList.add('show');
-        if (window.widgetAPI) window.widgetAPI.adjustHeight(TITLEBAR_HEIGHT);
-    }
     // Load auto-start state
     if (window.widgetAPI) {
         window.widgetAPI.getAutoStart().then(enabled => {
@@ -250,7 +243,25 @@ async function toggleAutoStart(enabled) {
     if (window.widgetAPI) {
         const result = await window.widgetAPI.setAutoStart(enabled);
         document.getElementById('autostart-toggle').checked = result;
+        if (result) {
+            showToast("Auto-start Enabled. (Linux AppImage users must add it to Startup Applications manually)");
+        } else {
+            showToast("Auto-start Disabled.");
+        }
     }
+}
+
+function showToast(msg) {
+    let t = document.getElementById('toast');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'toast';
+        document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t.timer);
+    t.timer = setTimeout(() => t.classList.remove('show'), 5000);
 }
 
 // Detect platform label
@@ -267,5 +278,86 @@ if (platformEl) {
 function openWebsite() {
     if (window.widgetAPI) {
         window.widgetAPI.openExternal('https://atishaksharma.com/calendar/');
+    }
+}
+
+// Month View Modal Logic
+let monthViewDate = new Date();
+
+function openMonthView() {
+    monthViewDate = new Date(widgetDate);
+    renderMonthView();
+    document.getElementById('month-view-modal').classList.remove('hidden');
+}
+
+function closeMonthView() {
+    document.getElementById('month-view-modal').classList.add('hidden');
+}
+
+function prevMonth() {
+    monthViewDate.setMonth(monthViewDate.getMonth() - 1);
+    renderMonthView();
+}
+
+function nextMonth() {
+    monthViewDate.setMonth(monthViewDate.getMonth() + 1);
+    renderMonthView();
+}
+
+function renderMonthView() {
+    const y = monthViewDate.getFullYear();
+    const m = monthViewDate.getMonth();
+    const targetLang = currentLang === 'hi' ? 'hi' : 'en';
+
+    // Set Header Title
+    const monthName = monthViewDate.toLocaleString(targetLang, { month: 'long' });
+    document.getElementById('month-view-title').textContent = `${monthName} ${y}`;
+
+    const daysContainer = document.getElementById('cal-days');
+    daysContainer.innerHTML = '';
+
+    const firstDay = new Date(y, m, 1).getDay();
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+    const todayDate = new Date();
+    const isCurrentMonth = (y === todayDate.getFullYear() && m === todayDate.getMonth());
+    const isSelectedMonth = (y === widgetDate.getFullYear() && m === widgetDate.getMonth());
+
+    // Padding empty cells before 1st of month
+    for (let i = 0; i < firstDay; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell cal-empty';
+        daysContainer.appendChild(cell);
+    }
+
+    // Days formulation
+    for (let i = 1; i <= daysInMonth; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
+        cell.textContent = i;
+
+        // Pad with leading zeros for dateKey match
+        const dStr = String(i).padStart(2, '0');
+        const mStr = String(m + 1).padStart(2, '0');
+        const dateKey = `${y}-${mStr}-${dStr}`;
+
+        if (festivals[dateKey]) {
+            cell.classList.add('has-festival');
+            cell.title = festivals[dateKey];
+        }
+
+        if (isCurrentMonth && i === todayDate.getDate()) {
+            cell.classList.add('cal-today');
+        } else if (isSelectedMonth && i === widgetDate.getDate()) {
+            cell.classList.add('cal-selected');
+        }
+
+        cell.onclick = () => {
+            widgetDate = new Date(y, m, i);
+            updateWidget();
+            closeMonthView();
+        };
+
+        daysContainer.appendChild(cell);
     }
 }

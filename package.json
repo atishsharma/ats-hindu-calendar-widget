@@ -4,8 +4,8 @@
   "description": "Ats's Hindu Calendar — Cross-platform desktop widget for the Hindu Panchang calendar",
   "main": "main.js",
   "scripts": {
-    "start": "electron . --no-sandbox",
-    "dev": "electron . --no-sandbox",
+    "start": "electron .",
+    "dev": "electron .",
     "build": "electron-builder --linux AppImage deb",
     "build:appimage": "electron-builder --linux AppImage",
     "build:deb": "electron-builder --linux deb"
@@ -65,6 +65,7 @@
     "electron"
   ],
   "author": "Atish Ak Sharma <atishsharma@example.com>",
+  "homepage": "https://atishaksharma.com/calendar/",
   "license": "MIT",
   "devDependencies": {
     "electron": "^35.2.1",
