@@ -1,21 +1,72 @@
 {
-  "name": "hindu-calendar-widget",
+  "name": "ats-hindu-calendar",
   "version": "1.0.0",
-  "description": "Cross-platform Hindu Calendar desktop widget",
+  "description": "Ats's Hindu Calendar — Cross-platform desktop widget for the Hindu Panchang calendar",
   "main": "main.js",
   "scripts": {
     "start": "electron . --no-sandbox",
-    "dev": "electron . --no-sandbox"
+    "dev": "electron . --no-sandbox",
+    "build": "electron-builder --linux AppImage deb",
+    "build:appimage": "electron-builder --linux AppImage",
+    "build:deb": "electron-builder --linux deb"
+  },
+  "build": {
+    "appId": "com.atishsharma.hindu-calendar",
+    "productName": "Ats Hindu Calendar",
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "styles.css",
+      "app.js",
+      "icon.png",
+      "tray-icon.png"
+    ],
+    "linux": {
+      "icon": "icons",
+      "category": "Utility",
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "desktop": {
+        "Name": "Ats Hindu Calendar",
+        "Comment": "Hindu Panchang Calendar Desktop Widget",
+        "Terminal": "false",
+        "Type": "Application",
+        "Categories": "Utility;Calendar;",
+        "StartupWMClass": "ats-hindu-calendar"
+      }
+    },
+    "appImage": {
+      "artifactName": "Ats-Hindu-Calendar-${version}-${arch}.AppImage"
+    },
+    "deb": {
+      "artifactName": "ats-hindu-calendar_${version}_${arch}.deb",
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libuuid1"
+      ]
+    }
   },
   "keywords": [
     "hindu",
     "calendar",
+    "panchang",
     "widget",
-    "desktop"
+    "desktop",
+    "electron"
   ],
-  "author": "",
-  "license": "ISC",
+  "author": "Atish Ak Sharma",
+  "license": "MIT",
   "devDependencies": {
-    "electron": "^35.2.1"
+    "electron": "^35.2.1",
+    "electron-builder": "^25.1.8"
   }
 }
