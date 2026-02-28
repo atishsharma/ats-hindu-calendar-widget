@@ -34,9 +34,17 @@
 ## 📸 Preview
 
 <p align="center">
-  <img src="screenshots/screenshot-collapsed.png" alt="Widget - Collapsed" width="320">
+  <img src="screenshots/screenshot-collapsed.png"
+       alt="Widget - Collapsed"
+       width="320"
+       style="vertical-align: middle;">
+
   &nbsp;&nbsp;&nbsp;
-  <img src="screenshots/screenshot-expanded.png" alt="Widget - Expanded with Panchang" width="320">
+
+  <img src="screenshots/screenshot-expanded.png"
+       alt="Widget - Expanded with Panchang"
+       width="320"
+       style="vertical-align: middle;">
 </p>
 
 <p align="center">
