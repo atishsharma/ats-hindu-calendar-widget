@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hindu Calendar Widget</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Marcellus&family=Poppins:wght@300;400;600;800&family=Noto+Sans+Devanagari:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app-shell">
+        <div id="titlebar">
+            <span class="titlebar-title">🕉 Hindu Calendar</span>
+            <div class="titlebar-buttons">
+                <button class="tb-btn tb-min" onclick="window.widgetAPI.minimize()">−</button>
+                <button class="tb-btn tb-close" onclick="window.widgetAPI.close()">×</button>
+            </div>
+        </div>
+
+        <!-- PAGE: Calendar Widget -->
+        <div id="page-calendar">
+            <div class="toolbar">
+                <div class="lang-switch">
+                    <button onclick="setLang('en')" id="btn-en" class="lang-btn active">EN</button>
+                    <button onclick="setLang('hi')" id="btn-hi" class="lang-btn">हिं</button>
+                </div>
+                <div class="toolbar-right">
+                    <div class="color-row">
+                        <div class="color-circle" style="background:#FF512F" onclick="setTheme('#FF512F','#DD2476')">
+                        </div>
+                        <div class="color-circle" style="background:#2196F3" onclick="setTheme('#2196F3','#3F51B5')">
+                        </div>
+                        <div class="color-circle" style="background:#4CAF50" onclick="setTheme('#4CAF50','#009688')">
+                        </div>
+                        <div class="color-circle" style="background:#FF9800" onclick="setTheme('#FF9800','#F44336')">
+                        </div>
+                        <div class="color-circle" style="background:#9C27B0" onclick="setTheme('#9C27B0','#6A1B9A')">
+                        </div>
+                        <div class="color-circle" style="background:#00BCD4" onclick="setTheme('#00BCD4','#0097A7')">
+                        </div>
+                        <div class="color-circle" style="background:#E91E63" onclick="setTheme('#E91E63','#AD1457')">
+                        </div>
+                    </div>
+                    <button class="settings-icon" onclick="showSettings()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="widget-container">
+                <div class="header-top">
+                    <span id="app-title-label" class="heading-font">Ats's Hindu Calendar</span>
+                </div>
+                <div class="date-section">
+                    <button onclick="prevDay(event)" class="nav-arrow-btn">◀</button>
+                    <div class="date-center" onclick="openDatePicker()">
+                        <div id="widget-large-date" class="block-number">...</div>
+                        <div class="date-info-stack">
+                            <div id="widget-day-name" class="block-day">...</div>
+                            <div id="widget-full-month" class="block-month">...</div>
+                            <div id="widget-full-year" class="block-year">...</div>
+                            <div id="widget-hindu-year" class="block-hindu-year">...</div>
+                        </div>
+                    </div>
+                    <button onclick="nextDay(event)" class="nav-arrow-btn">▶</button>
+                </div>
+
+                <div class="widget-body">
+                    <div class="symbol-section">
+                        <div class="symbol-glow"></div>
+                        <div id="central-symbol" class="central-symbol">♈</div>
+                        <p id="widget-month-label" class="month-label"></p>
+                    </div>
+                    <h3 id="widget-tithi" class="tithi-text">...</h3>
+                    <div id="widget-muhurat-box" class="muhurat-box"></div>
+                    <div class="paksha-row">
+                        <span id="widget-paksha-label" class="badge badge-gray">...</span>
+                        <span id="widget-ritu-label" class="badge badge-amber">...</span>
+                    </div>
+                    <div class="astro-row">
+                        <span>🌅 <span id="q-sunrise">06:44 AM</span></span>
+                        <span>🌇 <span id="q-sunset">06:18 PM</span></span>
+                    </div>
+
+                    <button id="panchang-btn" onclick="toggleQuickPanchang(event)" class="panchang-toggle-btn">
+                        <span id="label-daily-panchang">Daily Panchang</span>
+                        <span id="dropdown-arrow" class="arrow">▼</span>
+                    </button>
+                    <div id="quick-panchang-dropdown" class="panchang-dropdown">
+                        <div class="panchang-content">
+                            <div class="detail-row"><span class="detail-label">Nakshatra</span><span
+                                    class="detail-value" id="q-nakshatra">...</span></div>
+                            <div class="detail-row"><span class="detail-label">Brahma Muhurat</span><span
+                                    class="detail-value indigo" id="q-brahma">...</span></div>
+                            <div class="detail-row"><span class="detail-label">Yoga</span><span class="detail-value"
+                                    id="q-yoga">...</span></div>
+                            <div class="detail-row"><span class="detail-label">Karana</span><span class="detail-value"
+                                    id="q-karana">...</span></div>
+                            <div class="detail-row"><span class="detail-label red">Rahu Kaal</span><span
+                                    class="detail-value red" id="q-rahu">...</span></div>
+                            <div class="detail-row noborder"><span class="detail-label">Signs</span><span
+                                    class="detail-value indigo" id="q-signs">...</span></div>
+                            <div class="upcoming-section">
+                                <h4 class="upcoming-title">Upcoming Events</h4>
+                                <div id="upcoming-events-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="goToday()" class="today-btn">⟳ Today</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: Settings & About -->
+        <div id="page-settings" class="page-hidden">
+            <div class="settings-header">
+                <button class="settings-back" onclick="hideSettings()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <span class="settings-title">Settings & About</span>
+            </div>
+
+            <div class="settings-body">
+                <div class="about-card">
+                    <img src="icon.png" class="about-icon" alt="App Icon">
+                    <div class="about-info">
+                        <h3 class="about-name">Ats's Hindu Calendar</h3>
+                        <p class="about-version">Version 1.0.0</p>
+                    </div>
+                </div>
+
+                <p class="about-desc">
+                    A beautiful cross-platform desktop widget for the Hindu Panchang calendar.
+                    View daily tithi, nakshatra, yoga, karana, rahu kaal, auspicious timings,
+                    and upcoming festivals — all at a glance.
+                </p>
+
+                <div class="about-details">
+                    <div class="detail-row noborder">
+                        <span class="detail-label">Developer</span>
+                        <span class="detail-value">Atish Ak Sharma</span>
+                    </div>
+                    <div class="detail-row noborder" style="cursor:pointer" onclick="openWebsite()">
+                        <span class="detail-label">Website</span>
+                        <span class="detail-value" style="color:var(--p-start)">Web Calendar ↗</span>
+                    </div>
+                    <div class="detail-row noborder">
+                        <span class="detail-label">Platform</span>
+                        <span class="detail-value" id="platform-label">Cross-platform</span>
+                    </div>
+                </div>
+
+                <div class="settings-section-label">Settings</div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-name">Start at Login</span>
+                        <span class="setting-hint">Launch widget when system starts</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autostart-toggle" onchange="toggleAutoStart(this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="about-footer">
+                    <p>Made with ❤️ for Open Source</p>
+                    <p class="about-copyright">© 2026 Ats's Hindu Calendar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="date-picker-modal" class="modal-overlay hidden">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 class="modal-title">Select Date</h3>
+            <div class="picker-row">
+                <select id="select-day"></select>
+                <select id="select-month"></select>
+                <select id="select-year"></select>
+            </div>
+            <div class="modal-actions">
+                <button onclick="closeDatePicker()" class="modal-cancel">Cancel</button>
+                <button onclick="applyDatePicker()" class="modal-apply">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

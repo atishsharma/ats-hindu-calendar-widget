@@ -1,0 +1,21 @@
+{
+  "name": "hindu-calendar-widget",
+  "version": "1.0.0",
+  "description": "Cross-platform Hindu Calendar desktop widget",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "dev": "electron . --no-sandbox"
+  },
+  "keywords": [
+    "hindu",
+    "calendar",
+    "widget",
+    "desktop"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^35.2.1"
+  }
+}
