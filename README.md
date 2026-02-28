@@ -33,23 +33,22 @@
 
 ## 📸 Preview
 
-<p align="center">
-  <img src="screenshots/screenshot-collapsed.png"
-       alt="Widget - Collapsed"
-       width="320"
-       style="vertical-align: middle;">
-
-  &nbsp;&nbsp;&nbsp;
-
-  <img src="screenshots/screenshot-expanded.png"
-       alt="Widget - Expanded with Panchang"
-       width="320"
-       style="vertical-align: middle;">
-</p>
-
-<p align="center">
-  <em>Collapsed view &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expanded with Daily Panchang</em>
-</p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="screenshots/screenshot-collapsed.png"
+           alt="Widget - Collapsed"
+           width="320"><br>
+      <em>Collapsed view</em>
+    </td>
+    <td align="center">
+      <img src="screenshots/screenshot-expanded.png"
+           alt="Widget - Expanded with Panchang"
+           width="320"><br>
+      <em>Expanded with Daily Panchang</em>
+    </td>
+  </tr>
+</table>
 
 ## 🚀 Quick Start
 
