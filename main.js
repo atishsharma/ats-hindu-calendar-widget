@@ -1,6 +1,10 @@
 const { app, BrowserWindow, Tray, Menu, screen, ipcMain } = require('electron');
 const path = require('path');
 
+// Disable sandbox for Linux compatibility (fixes AppImage coredump TRAP)
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('disable-gpu-sandbox');
+
 let mainWindow;
 let tray;
 let isLocked = false;
