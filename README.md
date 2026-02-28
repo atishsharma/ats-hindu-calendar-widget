@@ -34,7 +34,13 @@
 ## 📸 Preview
 
 <p align="center">
-  <em>A compact, elegant widget that sits on your desktop</em>
+  <img src="screenshots/screenshot-collapsed.png" alt="Widget - Collapsed" width="320">
+  &nbsp;&nbsp;&nbsp;
+  <img src="screenshots/screenshot-expanded.png" alt="Widget - Expanded with Panchang" width="320">
+</p>
+
+<p align="center">
+  <em>Collapsed view &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Expanded with Daily Panchang</em>
 </p>
 
 ## 🚀 Quick Start
