@@ -1,174 +1,106 @@
 <p align="center">
-  <img src="icon.png" alt="Ats's Hindu Calendar" width="120" height="120" style="border-radius: 24px;">
+  <img src="icons/256x256.png" alt="Ats's Hindu Calendar" width="120" height="120">
 </p>
 
 <h1 align="center">🕉 Ats's Hindu Calendar Widget</h1>
 
 <p align="center">
-  <strong>A beautiful, cross-platform desktop widget for the Hindu Panchang calendar.</strong>
+  <strong>A glass-style desktop widget for the Hindu Panchang, calculated for India.</strong>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-blue?style=flat-square" alt="Platform">
   <img src="https://img.shields.io/badge/Built%20with-Electron-47848F?style=flat-square&logo=electron" alt="Electron">
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
-  <img src="https://img.shields.io/badge/Made%20with-%E2%9D%A4%EF%B8%8F-red?style=flat-square" alt="Love">
 </p>
-
----
-
-## ✨ Features
-
-- 📅 **Daily Panchang** — Tithi, Nakshatra, Yoga, Karana, Rahu Kaal & more
-- 🌅 **Sunrise & Sunset** times at a glance
-- 🎉 **Festival & Vrat** tracking with upcoming events
-- 🔮 **Rashi (Zodiac)** symbol with animated glow
-- 💍 **Muhurat Indicators** — Marriage, Naming, Travel
-- 🌐 **Bilingual** — English & Hindi (हिंदी) support
-- 🎨 **7 Color Themes** — Pink, Blue, Green, Orange, Purple, Cyan, Rose
-- 📌 **Always-on-Top** floating widget with system tray
-- 🖱️ **Hover Titlebar** — Clean look, appears only when needed
-- ⚙️ **Settings Page** — About info, auto-start at login
-- 🚀 **Auto-Start** — Launch at system startup (Windows, macOS, Linux)
-
-## 📸 Preview
-
-<table align="center">
-  <tr>
-    <td align="center">
-      <img src="screenshots/screenshot-collapsed.png"
-           alt="Widget - Collapsed"
-           width="320"><br>
-      <em>Collapsed view</em>
-    </td>
-    <td align="center">
-      <img src="screenshots/screenshot-expanded.png"
-           alt="Widget - Expanded with Panchang"
-           width="320"><br>
-      <em>Expanded with Daily Panchang</em>
-    </td>
-  </tr>
-</table>
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v16 or later)
-- npm (comes with Node.js)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/atishsharma/ats-hindu-calendar-widget.git
-cd ats-hindu-calendar-widget
-
-# Install dependencies
-npm install
-
-# Run the widget
-npm start
-```
-
-## 🛠️ Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| Framework | [Electron.js](https://www.electronjs.org/) |
-| Frontend | HTML5, CSS3, Vanilla JavaScript |
-| Fonts | [Google Fonts](https://fonts.google.com/) — Poppins, Marcellus, Noto Sans Devanagari |
-| Icons | SVG (Feather Icons style) |
-
-## 📁 Project Structure
-
-```
-ats-hindu-calendar-widget/
-├── main.js          # Electron main process — window, tray, IPC
-├── preload.js       # Secure bridge between main & renderer
-├── index.html       # Widget UI structure
-├── styles.css       # Complete styling — themes, animations
-├── app.js           # Calendar logic, i18n, panchang calculations
-├── icon.png         # App icon (256x256)
-├── tray-icon.png    # System tray icon (32x32)
-├── package.json     # Project config & dependencies
-└── README.md        # You are here!
-```
-
-## 🎨 Customization
-
-### Color Themes
-Click any color circle in the toolbar to switch themes instantly:
-
-| Theme | Colors |
-|-------|--------|
-| 🔴 Pink | `#FF512F` → `#DD2476` |
-| 🔵 Blue | `#2196F3` → `#3F51B5` |
-| 🟢 Green | `#4CAF50` → `#009688` |
-| 🟠 Orange | `#FF9800` → `#F44336` |
-| 🟣 Purple | `#9C27B0` → `#6A1B9A` |
-| 🩵 Cyan | `#00BCD4` → `#0097A7` |
-| 🌹 Rose | `#E91E63` → `#AD1457` |
-
-### Language
-Toggle between **EN** (English) and **हिं** (Hindi) using the language switcher.
-
-## ⚙️ System Tray
-
-Right-click the tray icon for quick actions:
-- **Show/Hide** the widget
-- **Lock Position** — prevent accidental dragging
-- **Always on Top** — toggle floating behavior
-- **Quit** — close the app
-
-## 🔧 Development
-
-```bash
-# Run in development mode
-npm start
-
-# The app uses --no-sandbox flag for Linux compatibility
-```
-
-## 📦 Building
-
-To package the app for distribution:
-
-```bash
-# Install electron-builder
-npm install --save-dev electron-builder
-
-# Build for your platform
-npx electron-builder
-```
-
-## 🌐 Web Version
-
-A web version of this calendar is also available at:
-**[atishaksharma.com/calendar](https://atishaksharma.com/calendar/)**
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 👨‍💻 Developer
-
-**Atish Ak Sharma**
-- 🌐 [atishaksharma.com](https://atishaksharma.com)
-- 📧 GitHub: [@atishsharma](https://github.com/atishsharma)
 
 ---
 
 <p align="center">
-  Made with ❤️ for Open Source
+  <img src="screenshots/compact.png" alt="Compact" height="220">
+  <img src="screenshots/standard.png" alt="Standard" height="420">
+  <img src="screenshots/standard-light-hi.png" alt="Standard, Hindi" height="420">
 </p>
+<p align="center"><img src="screenshots/wide.png" alt="Wide" width="640"></p>
+
+## ✨ Features
+
+- 📅 **Real Panchang, calculated on your device.** Tithi, Nakshatra, Yoga and Karana with their end times, plus Paksha, Hindu month, Ritu, Vikram and Shaka Samvat, and Moon/Sun rashi.
+- 🌅 **Sunrise and sunset** for 44 Indian cities, all in IST.
+- ⏰ **Muhurat and kaal:** Brahma Muhurat, Abhijit, Rahu Kaal, Yamaganda and Gulika.
+- 🎉 **Festivals and vrats** worked out from tithi rules, so no yearly data file is needed. Covers Diwali, Holi, Navratri, Janmashtami, Ganesh Chaturthi, Karva Chauth, Chhath, the Sankrantis, all 24 named Ekadashis, Pradosh, Sankashti, Purnima and Amavasya. Adhik Maas is handled.
+- 🗓 **Month view** with the tithi and festival markers on each day.
+- 🪟 **Three layouts:** Compact (200²), Standard, and Wide (a dashboard with the month grid).
+- 🌗 **Light, Dark or Auto theme** (follows the system), with Liquid Glass styling and 7 accent colours.
+- 🌐 **English and Hindi.**
+- 📌 **Always on Top** that works on Windows, macOS (including over full-screen apps) and Linux X11/XWayland.
+- 🚀 **Start at login** on all three OSes. It is on by default; turn it off in Settings or from the tray.
+- 🔒 Lock position, remembers where you left it, and works fully offline (fonts are bundled).
+
+### Accuracy
+
+- Sun and Moon positions use Meeus, *Astronomical Algorithms* (ch. 25 and 47). Sidereal positions use the Lahiri ayanamsa.
+- Tithi end times match drikpanchang.com (New Delhi) to the minute.
+- Festival dates for 2025 and 2026 are checked against Drik Panchang in `test/panchang.test.js`.
+- Ekadashi uses the udaya-tithi (Vaishnava) rule. Regional customs can differ by a day.
+
+## 📦 Download
+
+Get the latest build from **[Releases](https://github.com/atishsharma/ats-hindu-calendar-widget/releases)**:
+
+| OS | File |
+|----|------|
+| Windows | `Ats-Hindu-Calendar-Setup-x.y.z-x64.exe` (installer) or `…-Portable-…exe` |
+| macOS (Intel / Apple Silicon) | `Ats-Hindu-Calendar-x.y.z-mac-x64.dmg` / `…-mac-arm64.dmg` |
+| Linux | `.AppImage`, `.deb`, `.tar.gz` |
+
+**macOS:** the build is not notarized. After copying it to Applications, run
+`xattr -cr "/Applications/Ats Hindu Calendar.app"` once, or right-click the app and choose **Open**.
+
+**Linux:** always-on-top needs X11 or XWayland, and the app switches to XWayland automatically.
+Set `ATS_NATIVE_WAYLAND=1` to force native Wayland; always-on-top won't work there.
+The tray needs an AppIndicator extension on GNOME. Every tray action is also available in the widget's Settings.
+
+## 🚀 Development
+
+```bash
+git clone https://github.com/atishsharma/ats-hindu-calendar-widget.git
+cd ats-hindu-calendar-widget
+npm install
+npm start            # use `npm run start:nosandbox` on Ubuntu 24.04+
+npm test             # astronomy + festival date tests
+```
+
+To preview the UI in a browser, open `src/renderer/index.html?layout=wide&theme=light&lang=hi`.
+
+### Building
+
+```bash
+npm run dist:linux   # AppImage, deb, tar.gz
+npm run dist:win     # NSIS installer + portable (run on Windows)
+npm run dist:mac     # dmg + zip, x64 + arm64 (run on macOS)
+```
+
+Pushing a `v*` tag runs `.github/workflows/release.yml`. It builds on all three OSes and publishes a GitHub Release.
+
+## 📁 Structure
+
+```
+src/
+├── lib/panchang.js      # astronomy + panchang + festival engine (no dependencies)
+├── main/main.js         # window, always-on-top, tray, autostart, settings
+├── main/preload.js      # IPC bridge
+└── renderer/            # UI (index.html, styles.css, app.js, bundled fonts)
+build/                   # icons (.ico/.icns/.png), afterPack hook, NSIS script
+icons/                   # Linux icon set
+test/                    # node:test suite
+mockups/                 # design mockup
+```
+
+## 📄 License
+
+MIT. Fonts: Inter and Noto Sans Devanagari, both under the SIL OFL 1.1.
+
+## 👨‍💻 Developer
+
+**Atish Ak Sharma** · [atishaksharma.com](https://atishaksharma.com) · [@atishsharma](https://github.com/atishsharma)

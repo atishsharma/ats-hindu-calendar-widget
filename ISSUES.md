@@ -1,4 +1,10 @@
-# Code Audit — Issues Found
+# Code Audit — Issues Found (v1.0.0)
+
+> **Status: all items below are addressed in v2.0.0** (rewrite under `src/`).
+> Panchang is now calculated astronomically (`src/lib/panchang.js`, verified in `test/`),
+> always-on-top / autostart / lock / tray are handled per OS in `src/main/main.js`,
+> and packaging for Windows (NSIS + portable), macOS (dmg/zip x64+arm64) and
+> Linux (AppImage, deb, tar.gz) runs in `.github/workflows/release.yml`.
 
 ## 1. Always-on-Top broken (all OS)
 
