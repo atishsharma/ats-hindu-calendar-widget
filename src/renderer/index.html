@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-layout="standard">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ats Hindu Calendar</title>
+    <link rel="stylesheet" href="fonts/fonts.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main id="card" class="glass">
+        <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+        <!-- Top bar: drag handle + window controls -->
+        <header class="bar">
+            <div class="chrome">
+                <button class="dot close" data-act="hide" title="Hide" aria-label="Hide"></button>
+                <button class="dot pin" data-act="toggle-top" title="Always on top" aria-label="Always on top"></button>
+            </div>
+            <div class="bar-title" id="bar-title"></div>
+            <div class="bar-actions">
+                <button class="icon-btn" data-act="prev" data-i18n-title="prevDay" aria-label="Previous day">
+                    <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></svg>
+                </button>
+                <button class="icon-btn today-btn" data-act="today" data-i18n="today">Today</button>
+                <button class="icon-btn" data-act="next" data-i18n-title="nextDay" aria-label="Next day">
+                    <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></svg>
+                </button>
+                <button class="icon-btn" data-act="view-month" data-i18n-title="monthView" aria-label="Month view">
+                    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M3 10h18M8 3v4M16 3v4" /></svg>
+                </button>
+                <button class="icon-btn" data-act="view-settings" data-i18n-title="settings" aria-label="Settings">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" /></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Views are rendered by app.js -->
+        <section id="view-day" class="view"></section>
+        <section id="view-month" class="view" hidden></section>
+        <section id="view-settings" class="view" hidden></section>
+    </main>
+
+    <div id="toast" role="status"></div>
+
+    <script src="../lib/panchang.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [main, 'claude/**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+
+  build:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            args: --linux AppImage deb tar.gz --x64
+          - os: windows-latest
+            args: --win nsis portable --x64
+          - os: macos-latest
+            args: --mac dmg zip --x64 --arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Package
+        run: npx electron-builder ${{ matrix.args }} --publish never
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ runner.os }}
+          if-no-files-found: error
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.tar.gz
+            dist/*.exe
+            dist/*.dmg
+            dist/*.zip
+
+  # Publishes a release for tag pushes, and for pushes to main whose package.json
+  # version has no release yet (the v<version> tag is created by the release).
+  release:
+    needs: build
+    if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve tag
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then TAG="$GITHUB_REF_NAME"; else TAG="v$(node -p "require('./package.json').version")"; fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [[ "$GITHUB_REF" != refs/tags/* ]] && gh release view "$TAG" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; echo "Release $TAG already exists — bump package.json version to publish a new one."
+          fi
+      - uses: actions/download-artifact@v4
+        if: steps.tag.outputs.skip != 'true'
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Checksums
+        if: steps.tag.outputs.skip != 'true'
+        run: cd artifacts && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - uses: softprops/action-gh-release@v2
+        if: steps.tag.outputs.skip != 'true'
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Ats Hindu Calendar ${{ steps.tag.outputs.tag }}
+          generate_release_notes: true
+          files: artifacts/*

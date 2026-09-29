@@ -1,49 +1,56 @@
 {
   "name": "ats-hindu-calendar",
-  "version": "1.0.0",
-  "description": "Ats's Hindu Calendar — Cross-platform desktop widget for the Hindu Panchang calendar",
-  "main": "main.js",
+  "version": "2.0.0",
+  "description": "Ats's Hindu Calendar — cross-platform desktop widget for the Hindu Panchang (India)",
+  "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "dev": "electron .",
-    "build": "electron-builder --linux AppImage deb",
-    "build:appimage": "electron-builder --linux AppImage",
-    "build:deb": "electron-builder --linux deb"
+    "start:nosandbox": "electron . --no-sandbox",
+    "test": "node --test \"test/**/*.test.js\"",
+    "dist:linux": "electron-builder --linux AppImage deb tar.gz --x64",
+    "dist:win": "electron-builder --win nsis portable --x64",
+    "dist:mac": "electron-builder --mac dmg zip --x64 --arm64",
+    "dist": "electron-builder"
   },
   "build": {
     "appId": "com.atishsharma.hindu-calendar",
     "productName": "Ats Hindu Calendar",
+    "executableName": "ats-hindu-calendar",
+    "copyright": "© 2026 Atish Ak Sharma",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
     "files": [
-      "main.js",
-      "preload.js",
-      "index.html",
-      "styles.css",
-      "app.js",
-      "icon.png",
-      "tray-icon.png"
+      "package.json",
+      "src/**/*",
+      "icons/*.png",
+      "build/icon.ico",
+      "build/icon.png"
     ],
+    "afterPack": "build/afterPack.js",
+    "artifactName": "Ats-Hindu-Calendar-${version}-${os}-${arch}.${ext}",
     "linux": {
       "icon": "icons",
       "category": "Utility",
-      "maintainer": "Atish Ak Sharma <atishsharma@example.com>",
+      "synopsis": "Hindu Panchang desktop widget",
+      "maintainer": "Atish Ak Sharma <atishaksharma@gmail.com>",
       "target": [
         "AppImage",
-        "deb"
+        "deb",
+        "tar.gz"
       ],
       "desktop": {
-        "Name": "Ats Hindu Calendar",
-        "Comment": "Hindu Panchang Calendar Desktop Widget",
-        "Terminal": "false",
-        "Type": "Application",
-        "Categories": "Utility;Calendar;",
-        "StartupWMClass": "ats-hindu-calendar"
-      }
-    },
-    "appImage": {
-      "artifactName": "Ats-Hindu-Calendar-${version}-${arch}.AppImage"
+        "entry": {
+          "Name": "Ats Hindu Calendar",
+          "Comment": "Hindu Panchang Calendar Desktop Widget",
+          "Categories": "Utility;Calendar;",
+          "StartupWMClass": "ats-hindu-calendar"
+        }
+      },
+      "syncDesktopName": true
     },
     "deb": {
-      "artifactName": "ats-hindu-calendar_${version}_${arch}.deb",
       "depends": [
         "libgtk-3-0",
         "libnotify4",
@@ -52,8 +59,47 @@
         "libxtst6",
         "xdg-utils",
         "libatspi2.0-0",
-        "libuuid1"
+        "libuuid1",
+        "libsecret-1-0"
+      ],
+      "appArmorProfile": "build/apparmor-profile.tpl"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis",
+        "portable"
       ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Ats Hindu Calendar",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false,
+      "include": "build/installer.nsh",
+      "artifactName": "Ats-Hindu-Calendar-Setup-${version}-${arch}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Ats-Hindu-Calendar-Portable-${version}-${arch}.${ext}"
+    },
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.productivity",
+      "identity": null,
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "extendInfo": {
+        "LSUIElement": false
+      }
+    },
+    "dmg": {
+      "artifactName": "Ats-Hindu-Calendar-${version}-mac-${arch}.${ext}"
     }
   },
   "keywords": [
@@ -64,11 +110,13 @@
     "desktop",
     "electron"
   ],
-  "author": "Atish Ak Sharma <atishsharma@example.com>",
+  "author": "Atish Ak Sharma <atishaksharma@gmail.com>",
   "homepage": "https://atishaksharma.com/calendar/",
+  "repository": "github:atishsharma/ats-hindu-calendar-widget",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^35.2.1",
-    "electron-builder": "^24.13.3"
-  }
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3"
+  },
+  "desktopName": "ats-hindu-calendar.desktop"
 }
