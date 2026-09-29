@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hindu Calendar Glass</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────── Tokens ─────────── */
+:root {
+  --accent: #ff6a3d;
+  --accent-2: #e8317a;
+  --accent-grad: linear-gradient(135deg, var(--accent), var(--accent-2));
+  --radius-xl: 30px;
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --blur: blur(38px) saturate(190%);
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}
+:root[data-theme="light"] {
+  --wall: radial-gradient(1200px 700px at 10% 10%, #ffd6c4 0%, transparent 60%),
+          radial-gradient(900px 700px at 90% 20%, #c9d8ff 0%, transparent 60%),
+          radial-gradient(1000px 800px at 50% 100%, #f7c6e4 0%, transparent 60%), #eef0f6;
+  --glass: rgba(255, 255, 255, 0.46);
+  --glass-strong: rgba(255, 255, 255, 0.66);
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --glass-edge-2: rgba(255, 255, 255, 0.25);
+  --tile: rgba(255, 255, 255, 0.42);
+  --text: #1c1c1f;
+  --text-2: rgba(28, 28, 31, 0.62);
+  --text-3: rgba(28, 28, 31, 0.40);
+  --hairline: rgba(0, 0, 0, 0.07);
+  --shadow: 0 30px 60px -20px rgba(40, 30, 80, 0.28), 0 10px 24px -12px rgba(40, 30, 80, 0.18);
+  --danger: #d4263b;
+  --good: #1f9d55;
+}
+:root[data-theme="dark"] {
+  --wall: radial-gradient(1200px 700px at 10% 10%, #5a1f3d 0%, transparent 60%),
+          radial-gradient(900px 700px at 90% 15%, #1d2c6b 0%, transparent 60%),
+          radial-gradient(1000px 800px at 50% 100%, #3a1560 0%, transparent 60%), #0b0b12;
+  --glass: rgba(30, 30, 40, 0.42);
+  --glass-strong: rgba(40, 40, 52, 0.60);
+  --glass-edge: rgba(255, 255, 255, 0.22);
+  --glass-edge-2: rgba(255, 255, 255, 0.04);
+  --tile: rgba(255, 255, 255, 0.06);
+  --text: #f5f5f7;
+  --text-2: rgba(245, 245, 247, 0.64);
+  --text-3: rgba(245, 245, 247, 0.38);
+  --hairline: rgba(255, 255, 255, 0.08);
+  --shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.7), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  --danger: #ff6b7d;
+  --good: #4ade80;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; }
+body {
+  font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, system-ui, sans-serif;
+  background: var(--wall);
+  background-attachment: fixed;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  transition: background .5s var(--ease), color .3s;
+  overflow-x: hidden;
+}
+
+/* floating blobs so the glass has something to refract */
+.blob { position: fixed; border-radius: 50%; filter: blur(8px); opacity: .75; z-index: 0; pointer-events: none; }
+.blob.b1 { width: 260px; height: 260px; left: 6%; top: 42%; background: var(--accent-grad); animation: float 14s ease-in-out infinite; }
+.blob.b2 { width: 180px; height: 180px; right: 10%; top: 12%; background: linear-gradient(135deg, #4f8cff, #8b5cf6); animation: float 18s ease-in-out infinite reverse; }
+.blob.b3 { width: 140px; height: 140px; right: 30%; bottom: 6%; background: linear-gradient(135deg, #22d3ee, #10b981); animation: float 16s ease-in-out infinite; }
+@keyframes float { 50% { transform: translate(30px, -40px) scale(1.08); } }
+
+/* ─────────── Glass primitive ─────────── */
+.glass {
+  position: relative;
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow),
+              inset 0 1px 0 0 var(--glass-edge),
+              inset 0 0 0 1px var(--glass-edge-2);
+  isolation: isolate;
+}
+/* specular rim — the "liquid glass" edge highlight */
+.glass::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(160deg, var(--glass-edge) 0%, transparent 35%, transparent 65%, var(--glass-edge) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+/* soft top sheen */
+.glass::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
+  background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 40%);
+}
+.tile {
+  background: var(--tile);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+/* ─────────── Page chrome ─────────── */
+.page { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 28px 16px 60px; }
+.top {
+  display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between;
+  padding: 12px 14px 12px 20px; border-radius: 22px; margin-bottom: 34px;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -.01em; }
+.brand .om { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; color: #fff; background: var(--accent-grad); font-size: 16px; }
+.brand small { display: block; font-weight: 500; font-size: 11px; color: var(--text-2); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+.seg { display: inline-flex; padding: 3px; border-radius: 12px; background: var(--tile); box-shadow: inset 0 0 0 1px var(--hairline); }
+.seg button {
+  border: 0; background: transparent; color: var(--text-2); font: 600 12px/1 inherit; font-family: inherit;
+  padding: 8px 12px; border-radius: 9px; cursor: pointer; transition: all .25s var(--ease);
+}
+.seg button.on { background: var(--glass-strong); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,.12), inset 0 1px 0 var(--glass-edge); }
+
+.swatches { display: flex; gap: 7px; padding: 6px 8px; border-radius: 12px; background: var(--tile); box-shadow: inset 0 0 0 1px var(--hairline); }
+.sw { width: 18px; height: 18px; border-radius: 50%; border: 0; cursor: pointer; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.5); transition: transform .2s var(--ease); }
+.sw:hover { transform: scale(1.18); }
+.sw.on { outline: 2px solid var(--text); outline-offset: 2px; }
+
+h2.section { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--text-2); margin: 0 4px 14px; }
+.stage { display: flex; flex-wrap: wrap; gap: 34px; align-items: flex-start; justify-content: center; }
+.slot { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.slot-label { font-size: 12px; font-weight: 600; color: var(--text-2); }
+.slot-label b { color: var(--text); }
+.stage[data-show]:not([data-show="all"]) .slot { display: none; }
+.stage[data-show="compact"] .slot.compact,
+.stage[data-show="standard"] .slot.standard,
+.stage[data-show="wide"] .slot.wide { display: flex; }
+
+/* ─────────── Shared widget atoms ─────────── */
+.w { color: var(--text); overflow: hidden; }
+.eyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.big-num {
+  font-weight: 800; letter-spacing: -.05em; line-height: .9;
+  background: var(--accent-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.muted { color: var(--text-2); }
+.faint { color: var(--text-3); }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600;
+  padding: 5px 10px; border-radius: 999px; background: var(--tile); box-shadow: inset 0 0 0 1px var(--hairline); white-space: nowrap;
+}
+.chip.accent { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+.chip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.icon-btn {
+  width: 28px; height: 28px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+  color: var(--text-2); background: var(--tile); box-shadow: inset 0 0 0 1px var(--hairline); transition: all .2s var(--ease);
+}
+.icon-btn:hover { color: var(--text); transform: scale(1.08); }
+.icon-btn svg { width: 14px; height: 14px; }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.kv { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--hairline); font-size: 12.5px; }
+.kv:last-child { border-bottom: 0; }
+.kv span:first-child { color: var(--text-2); }
+.kv span:last-child { font-weight: 600; }
+.kv.warn span { color: var(--danger); }
+.moon {
+  width: 44px; height: 44px; border-radius: 50%; position: relative; flex: none;
+  background: radial-gradient(circle at 35% 35%, #fff 0%, #e9e6dc 55%, #c9c4b4 100%);
+  box-shadow: 0 0 22px rgba(255, 244, 214, .45), inset -2px -3px 6px rgba(0,0,0,.18);
+}
+.moon::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: rgba(10,10,20,.78); transform: translateX(var(--phase, 40%)); }
+:root[data-theme="light"] .moon::after { background: rgba(60,60,90,.35); }
+.moon { overflow: hidden; }
+
+/* window chrome — macOS-like traffic lights, shown on hover */
+.chrome { display: flex; gap: 7px; align-items: center; opacity: 0; transition: opacity .25s; }
+.w:hover .chrome { opacity: 1; }
+.chrome i { width: 11px; height: 11px; border-radius: 50%; display: block; box-shadow: inset 0 0 0 .5px rgba(0,0,0,.25); }
+.chrome i:nth-child(1) { background: #ff5f57; } .chrome i:nth-child(2) { background: #febc2e; } .chrome i:nth-child(3) { background: #28c840; }
+.pin { font-size: 10px; font-weight: 600; display: inline-flex; gap: 4px; align-items: center; color: var(--text-3); }
+.pin.on { color: var(--accent); }
+
+/* ─────────── Layout 1: Compact (2×2 small) ─────────── */
+.w-compact { width: 190px; height: 190px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 34px; }
+.w-compact .big-num { font-size: 64px; }
+.w-compact .tithi { font-size: 13px; font-weight: 700; line-height: 1.2; }
+.w-compact .sub { font-size: 11px; }
+
+/* ─────────── Layout 2: Standard (vertical, current app) ─────────── */
+.w-standard { width: 340px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.w-standard .hero { display: flex; align-items: center; gap: 14px; padding: 4px 2px; }
+.w-standard .big-num { font-size: 76px; }
+.w-standard .date-stack { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.w-standard .day { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.w-standard .tithi-card { padding: 14px; display: flex; align-items: center; gap: 14px; }
+.w-standard .tithi-card h3 { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+.w-standard .sun { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.w-standard .sun .tile { padding: 11px 12px; }
+.w-standard .sun small { display: block; font-size: 10.5px; color: var(--text-2); font-weight: 500; }
+.w-standard .sun b { font-size: 15px; font-weight: 700; }
+.w-standard .panchang { padding: 4px 14px; }
+.w-standard details summary {
+  list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; font-size: 13px; font-weight: 700;
+}
+.w-standard details summary::-webkit-details-marker { display: none; }
+.w-standard details summary .chev { transition: transform .3s var(--ease); color: var(--text-3); }
+.w-standard details[open] summary .chev { transform: rotate(180deg); }
+.w-standard .events { display: flex; flex-direction: column; gap: 8px; }
+.ev { display: flex; align-items: center; gap: 12px; padding: 10px 12px; }
+.ev .d { width: 38px; text-align: center; flex: none; }
+.ev .d b { display: block; font-size: 16px; font-weight: 800; line-height: 1; }
+.ev .d small { font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: .08em; }
+.ev .t { font-size: 12.5px; font-weight: 600; }
+.ev .t small { display: block; font-weight: 500; color: var(--text-2); font-size: 11px; }
+.primary-btn {
+  border: 0; cursor: pointer; font: 700 13px/1 inherit; font-family: inherit; color: #fff; padding: 12px; border-radius: 14px;
+  background: var(--accent-grad); box-shadow: 0 8px 22px -8px var(--accent), inset 0 1px 0 rgba(255,255,255,.35);
+  transition: transform .2s var(--ease);
+}
+.primary-btn:active { transform: scale(.97); }
+.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ghost-btn {
+  border: 0; cursor: pointer; font: 600 13px/1 inherit; font-family: inherit; color: var(--text); padding: 12px; border-radius: 14px;
+  background: var(--tile); box-shadow: inset 0 0 0 1px var(--hairline);
+}
+
+/* ─────────── Layout 3: Wide dashboard (4×2) ─────────── */
+.w-wide { width: 720px; max-width: 100%; padding: 20px; display: grid; grid-template-columns: 220px 1fr 230px; gap: 18px; }
+.w-wide .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.w-wide .big-num { font-size: 96px; }
+.w-wide .day { font-size: 20px; font-weight: 700; }
+.w-wide .tithi-card { padding: 14px; display: flex; gap: 12px; align-items: center; }
+.w-wide .tithi-card h3 { font-size: 15px; font-weight: 700; }
+.w-wide .kv { padding: 7px 0; font-size: 12px; }
+.w-wide .panel { padding: 6px 14px; }
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; font-size: 11.5px; }
+.cal .h { font-size: 9.5px; font-weight: 700; color: var(--text-3); padding: 4px 0; letter-spacing: .06em; }
+.cal .c { aspect-ratio: 1; display: grid; place-items: center; border-radius: 9px; font-weight: 600; position: relative; cursor: pointer; transition: background .2s; }
+.cal .c:hover { background: var(--tile); }
+.cal .c.x { color: var(--text-3); }
+.cal .c.today { background: var(--accent-grad); color: #fff; box-shadow: 0 6px 16px -6px var(--accent); }
+.cal .c.fest::after { content: ""; position: absolute; bottom: 4px; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.cal .c.today.fest::after { background: #fff; }
+.cal .c.purnima { box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--accent) 55%, transparent); }
+
+/* ─────────── Responsive ─────────── */
+@media (max-width: 760px) {
+  .w-wide { grid-template-columns: 1fr; width: 100%; }
+  .w-standard { width: 100%; max-width: 360px; }
+  .top { padding: 12px; }
+}
+
+/* Notes */
+.notes { margin-top: 48px; padding: 20px 22px; border-radius: var(--radius-lg); font-size: 13px; line-height: 1.6; }
+.notes h3 { font-size: 14px; margin-bottom: 8px; }
+.notes ul { padding-left: 18px; color: var(--text-2); }
+.notes code { font-size: 12px; padding: 1px 6px; border-radius: 6px; background: var(--tile); color: var(--text); }
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+<div class="page">
+  <!-- Toolbar -->
+  <header class="top glass">
+    <div class="brand"><div class="om">ॐ</div><div>Ats's Hindu Calendar<small>Liquid Glass redesign · mockup</small></div></div>
+    <div class="controls">
+      <div class="seg" id="theme-seg" role="tablist" aria-label="Theme">
+        <button data-v="light">☀︎ Light</button>
+        <button data-v="dark" class="on">☾ Dark</button>
+        <button data-v="auto">Auto</button>
+      </div>
+      <div class="seg" id="layout-seg" aria-label="Layout">
+        <button data-v="all" class="on">All</button>
+        <button data-v="compact">Compact</button>
+        <button data-v="standard">Standard</button>
+        <button data-v="wide">Wide</button>
+      </div>
+      <div class="seg" id="lang-seg" aria-label="Language">
+        <button data-v="en" class="on">EN</button>
+        <button data-v="hi">हिं</button>
+      </div>
+      <div class="swatches" id="swatches"></div>
+    </div>
+  </header>
+
+  <h2 class="section">Widget layouts</h2>
+  <section class="stage" id="stage" data-show="all">
+
+    <!-- ① Compact -->
+    <div class="slot compact">
+      <div class="w w-compact glass">
+        <div class="row">
+          <span class="eyebrow" data-k="weekdayShort">Tue</span>
+          <div class="moon" style="width:26px;height:26px;--phase:48%"></div>
+        </div>
+        <div>
+          <div class="big-num" data-k="day">29</div>
+          <div class="tithi" data-k="tithi">Ashtami</div>
+          <div class="sub muted" data-k="pakshaMonth">Shukla · Ashvina</div>
+        </div>
+      </div>
+      <div class="slot-label"><b>Compact</b> · 190 × 190</div>
+    </div>
+
+    <!-- ② Standard -->
+    <div class="slot standard">
+      <div class="w w-standard glass">
+        <div class="row">
+          <div class="chrome"><i></i><i></i><i></i></div>
+          <span class="pin on" title="Always on top">📌 <span data-k="onTop">On top</span></span>
+          <div style="display:flex;gap:6px">
+            <button class="icon-btn" title="Previous day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button class="icon-btn" title="Next day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            <button class="icon-btn" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></button>
+          </div>
+        </div>
+
+        <div class="hero">
+          <div class="big-num" data-k="day">29</div>
+          <div class="date-stack">
+            <span class="eyebrow" data-k="samvat">Vikram Samvat 2083</span>
+            <span class="day" data-k="weekday">Tuesday</span>
+            <span class="muted" style="font-size:13px" data-k="monthYear">September 2026</span>
+          </div>
+        </div>
+
+        <div class="tithi-card tile">
+          <div class="moon" style="--phase:48%"></div>
+          <div style="min-width:0">
+            <h3 data-k="tithi">Ashtami</h3>
+            <div class="muted" style="font-size:12px" data-k="pakshaMonthLong">Shukla Paksha · Ashvina</div>
+            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+              <span class="chip accent"><span class="dot"></span><span data-k="festToday">Durga Ashtami</span></span>
+              <span class="chip" data-k="ritu">🍂 Sharad</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sun">
+          <div class="tile"><small data-k="sunriseL">Sunrise</small><b>06:12</b></div>
+          <div class="tile"><small data-k="sunsetL">Sunset</small><b>18:08</b></div>
+        </div>
+
+        <div class="panchang tile">
+          <details open>
+            <summary><span data-k="daily">Daily Panchang</span><span class="chev">▾</span></summary>
+            <div class="kv"><span data-k="nak">Nakshatra</span><span>Purva Ashadha</span></div>
+            <div class="kv"><span data-k="yoga">Yoga</span><span>Shobhana</span></div>
+            <div class="kv"><span data-k="karana">Karana</span><span>Bava</span></div>
+            <div class="kv"><span data-k="brahma">Brahma Muhurat</span><span>04:36 – 05:24</span></div>
+            <div class="kv warn"><span data-k="rahu">Rahu Kaal</span><span>15:09 – 16:38</span></div>
+          </details>
+        </div>
+
+        <div class="events">
+          <div class="ev tile"><div class="d"><b>02</b><small>Oct</small></div><div class="t">Dussehra<small>Vijayadashami</small></div></div>
+          <div class="ev tile"><div class="d"><b>03</b><small>Oct</small></div><div class="t">Papankusha Ekadashi<small>Vrat</small></div></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="primary-btn" data-k="today">Today</button>
+          <button class="ghost-btn" data-k="month">Month</button>
+        </div>
+      </div>
+      <div class="slot-label"><b>Standard</b> · 340 × auto</div>
+    </div>
+
+    <!-- ③ Wide -->
+    <div class="slot wide">
+      <div class="w w-wide glass">
+        <div class="col">
+          <div class="row"><div class="chrome"><i></i><i></i><i></i></div><span class="pin on">📌</span></div>
+          <div class="big-num" data-k="day">29</div>
+          <div>
+            <div class="day" data-k="weekday">Tuesday</div>
+            <div class="muted" style="font-size:13px" data-k="monthYear">September 2026</div>
+            <div class="eyebrow" style="margin-top:6px" data-k="samvat">Vikram Samvat 2083</div>
+          </div>
+          <div class="tithi-card tile">
+            <div class="moon" style="--phase:48%;width:36px;height:36px"></div>
+            <div><h3 data-k="tithi">Ashtami</h3><div class="muted" style="font-size:11.5px" data-k="pakshaMonth">Shukla · Ashvina</div></div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="row">
+            <b style="font-size:14px" data-k="monthYear">September 2026</b>
+            <div style="display:flex;gap:6px">
+              <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <button class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+          </div>
+          <div class="cal" id="cal"></div>
+        </div>
+
+        <div class="col">
+          <div class="sun" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="tile" style="padding:10px"><small class="muted" style="font-size:10px" data-k="sunriseL">Sunrise</small><div style="font-weight:700">06:12</div></div>
+            <div class="tile" style="padding:10px"><small class="muted" style="font-size:10px" data-k="sunsetL">Sunset</small><div style="font-weight:700">18:08</div></div>
+          </div>
+          <div class="panel tile">
+            <div class="kv"><span data-k="nak">Nakshatra</span><span>P. Ashadha</span></div>
+            <div class="kv"><span data-k="yoga">Yoga</span><span>Shobhana</span></div>
+            <div class="kv"><span data-k="karana">Karana</span><span>Bava</span></div>
+            <div class="kv warn"><span data-k="rahu">Rahu Kaal</span><span>15:09</span></div>
+          </div>
+          <div class="ev tile"><div class="d"><b>02</b><small>Oct</small></div><div class="t">Dussehra<small>Vijayadashami</small></div></div>
+        </div>
+      </div>
+      <div class="slot-label"><b>Wide</b> · 720 × 300</div>
+    </div>
+  </section>
+
+  <div class="notes glass">
+    <h3>Implementation notes</h3>
+    <ul>
+      <li>Glass = <code>backdrop-filter: blur(38px) saturate(190%)</code> + translucent fill + inset top highlight + masked gradient rim.</li>
+      <li>Electron: <code>transparent: true</code>; on macOS use <code>vibrancy: 'under-window'</code>, on Windows 11 <code>backgroundMaterial: 'acrylic'</code> for real desktop blur (CSS blur only sees in-window content).</li>
+      <li>Theme: tokens on <code>:root[data-theme]</code>; "Auto" follows <code>nativeTheme.shouldUseDarkColors</code> / <code>prefers-color-scheme</code>.</li>
+      <li>Layouts map to window sizes: compact 190², standard 340×auto, wide 720×300 — resize via one <code>setBounds</code>, not animated intervals.</li>
+      <li>Traffic-light chrome appears on hover; whole widget is <code>-webkit-app-region: drag</code> except buttons.</li>
+      <li>Panchang values here are sample data.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+const T = {
+  en: { weekdayShort:"Tue", weekday:"Tuesday", monthYear:"September 2026", samvat:"Vikram Samvat 2083", tithi:"Ashtami",
+        pakshaMonth:"Shukla · Ashvina", pakshaMonthLong:"Shukla Paksha · Ashvina", festToday:"Durga Ashtami", ritu:"🍂 Sharad",
+        sunriseL:"Sunrise", sunsetL:"Sunset", daily:"Daily Panchang", nak:"Nakshatra", yoga:"Yoga", karana:"Karana",
+        brahma:"Brahma Muhurat", rahu:"Rahu Kaal", today:"Today", month:"Month", onTop:"On top", day:"29" },
+  hi: { weekdayShort:"मंगल", weekday:"मंगलवार", monthYear:"सितंबर 2026", samvat:"विक्रम संवत 2083", tithi:"अष्टमी",
+        pakshaMonth:"शुक्ल · आश्विन", pakshaMonthLong:"शुक्ल पक्ष · आश्विन", festToday:"दुर्गा अष्टमी", ritu:"🍂 शरद",
+        sunriseL:"सूर्योदय", sunsetL:"सूर्यास्त", daily:"दैनिक पंचांग", nak:"नक्षत्र", yoga:"योग", karana:"करण",
+        brahma:"ब्रह्म मुहूर्त", rahu:"राहु काल", today:"आज", month:"माह", onTop:"ऊपर", day:"29" }
+};
+const root = document.documentElement;
+const mq = matchMedia('(prefers-color-scheme: dark)');
+let themeMode = 'dark';
+function applyTheme() { root.dataset.theme = themeMode === 'auto' ? (mq.matches ? 'dark' : 'light') : themeMode; }
+mq.addEventListener('change', applyTheme);
+
+function seg(id, fn) {
+  const el = document.getElementById(id);
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    el.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    fn(b.dataset.v);
+  });
+}
+seg('theme-seg', v => { themeMode = v; applyTheme(); });
+seg('layout-seg', v => { document.getElementById('stage').dataset.show = v; });
+seg('lang-seg', v => { document.querySelectorAll('[data-k]').forEach(n => { const s = T[v][n.dataset.k]; if (s) n.textContent = s; }); });
+
+const accents = [["#ff6a3d","#e8317a"],["#0a84ff","#5e5ce6"],["#30d158","#00a3a3"],["#ff9f0a","#ff453a"],["#bf5af2","#7d3cff"],["#64d2ff","#0a84ff"],["#ff375f","#c2185b"]];
+const sw = document.getElementById('swatches');
+accents.forEach(([a, b], i) => {
+  const btn = document.createElement('button');
+  btn.className = 'sw' + (i === 0 ? ' on' : '');
+  btn.style.background = `linear-gradient(135deg, ${a}, ${b})`;
+  btn.setAttribute('aria-label', 'Accent ' + (i + 1));
+  btn.onclick = () => {
+    root.style.setProperty('--accent', a); root.style.setProperty('--accent-2', b);
+    sw.querySelectorAll('.sw').forEach(x => x.classList.toggle('on', x === btn));
+  };
+  sw.appendChild(btn);
+});
+
+// Month grid — September 2026 (1st = Tuesday)
+(function buildCal() {
+  const cal = document.getElementById('cal');
+  ['S','M','T','W','T','F','S'].forEach(h => cal.insertAdjacentHTML('beforeend', `<div class="h">${h}</div>`));
+  const fest = [3, 14, 21, 29]; // sample festival dots
+  const lead = 2, prevLast = 31, days = 30;
+  for (let i = lead - 1; i >= 0; i--) cal.insertAdjacentHTML('beforeend', `<div class="c x">${prevLast - i}</div>`);
+  for (let d = 1; d <= days; d++) {
+    const cls = ['c', d === 29 && 'today', fest.includes(d) && 'fest', d === 26 && 'purnima'].filter(Boolean).join(' ');
+    cal.insertAdjacentHTML('beforeend', `<div class="${cls}">${d}</div>`);
+  }
+  const tail = (7 - ((lead + days) % 7)) % 7;
+  for (let d = 1; d <= tail; d++) cal.insertAdjacentHTML('beforeend', `<div class="c x">${d}</div>`);
+})();
+</script>
+</body>
+</html>
