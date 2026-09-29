@@ -2,6 +2,7 @@ name: Build & Release
 
 on:
   push:
+    branches: [main, 'claude/**']
     tags: ['v*']
   pull_request:
   workflow_dispatch:
@@ -55,19 +56,37 @@ jobs:
             dist/*.dmg
             dist/*.zip
 
+  # Publishes a release for tag pushes, and for pushes to main whose package.json
+  # version has no release yet (the v<version> tag is created by the release).
   release:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && (startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - name: Resolve tag
+        id: tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then TAG="$GITHUB_REF_NAME"; else TAG="v$(node -p "require('./package.json').version")"; fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [[ "$GITHUB_REF" != refs/tags/* ]] && gh release view "$TAG" >/dev/null 2>&1; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"; echo "Release $TAG already exists — bump package.json version to publish a new one."
+          fi
       - uses: actions/download-artifact@v4
+        if: steps.tag.outputs.skip != 'true'
         with:
           path: artifacts
           merge-multiple: true
       - name: Checksums
+        if: steps.tag.outputs.skip != 'true'
         run: cd artifacts && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
       - uses: softprops/action-gh-release@v2
+        if: steps.tag.outputs.skip != 'true'
         with:
-          name: Ats Hindu Calendar ${{ github.ref_name }}
+          tag_name: ${{ steps.tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Ats Hindu Calendar ${{ steps.tag.outputs.tag }}
           generate_release_notes: true
           files: artifacts/*

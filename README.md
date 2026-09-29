@@ -81,7 +81,8 @@ npm run dist:win     # NSIS installer + portable (run on Windows)
 npm run dist:mac     # dmg + zip, x64 + arm64 (run on macOS)
 ```
 
-Pushing a `v*` tag runs `.github/workflows/release.yml`. It builds on all three OSes and publishes a GitHub Release.
+`.github/workflows/release.yml` builds on all three OSes for every push and PR.
+A GitHub Release `v<version>` is published when a new `package.json` version lands on `main`, or when a `v*` tag is pushed.
 
 ## 📁 Structure
 
